@@ -1,7 +1,6 @@
-import Message from './Message';
+import Landing from "./components/Landing";
+import "./App.css";
 
-function App() {
-  return <div><Message /></div>;
+export default function App() {
+  return <Landing />;
 }
-
-export default App;

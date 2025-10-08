@@ -10,3 +10,39 @@ Plus One provides a variety of tools and user experiences to help Vanderbilt alu
 Front End: JavaScript + React 
 Backend: Spring Boot + Java 
 Database: Mongo DB
+
+## Backend Prereqs
+- **Java 17** (already assumed installed)
+- **No need to install Maven** — we use the Maven Wrapper (`./mvnw`)
+
+## Run the backend
+
+```bash
+cd PlusOneBackend
+# First time build (downloads deps)
+./mvnw spring-boot:run
+```
+
+Spring Boot will start on http://localhost:8080. MongoDB defaults to `localhost:27017`. You can override in `src/main/resources/application.properties`:
+
+```properties
+spring.data.mongodb.uri=mongodb://localhost:27017/plusone
+spring.application.name=PlusOneBackend
+server.port=8080
+```
+
+Set up instructions:
+
+```bash
+git clone <REPO_URL>
+cd CS4278-Group11/PlusOneBackend
+./mvnw spring-boot:run
+```
+
+## Useful Maven commands
+
+```bash
+./mvnw clean test
+./mvnw spring-boot:run
+./mvnw clean package
+```

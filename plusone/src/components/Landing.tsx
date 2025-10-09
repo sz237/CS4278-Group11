@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 function Landing() {
   return (
     <section className="min-vh-100 d-flex align-items-center bg-white">
@@ -11,12 +13,12 @@ function Landing() {
           <h1 className="display-4 fw-bold text-dark mb-1">PlusOne</h1>
 
           <div className="d-flex gap-3 mt-4">
-            <a className="btn btn-primary btn-lg px-4" href="/signup">
+            <Link to="/signup" className="btn btn-primary btn-lg px-4">
               Sign up
-            </a>
-            <a className="btn btn-outline-dark btn-lg px-4" href="/login">
+            </Link>
+            <Link to="/login" className="btn btn-outline-dark btn-lg px-4">
               Log in
-            </a>
+            </Link>
           </div>
         </div>
       </div>

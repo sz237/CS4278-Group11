@@ -39,6 +39,3 @@ cd plusone
 npm install
 npm run dev
 ```
-
-### 5. Open it
-- Open http://localhost:5173

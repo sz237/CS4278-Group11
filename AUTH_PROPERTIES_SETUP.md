@@ -40,39 +40,5 @@ npm install
 npm run dev
 ```
 
-### 5. Test It
+### 5. Open it
 - Open http://localhost:5173
-- Click "Sign up"
-- Use a @vanderbilt.edu email
-- Create account and test login
-
-## Features Available
-
-✅ **Vanderbilt Email Validation** - Only @vanderbilt.edu emails allowed  
-✅ **Secure Authentication** - BCrypt password hashing  
-✅ **Clean UI** - Your design preserved with full functionality  
-✅ **MongoDB Integration** - Users stored in your existing database  
-
-## API Endpoints
-
-- `POST /api/auth/signup` - Create account
-- `POST /api/auth/login` - Login
-- `GET /api/auth/test` - Health check
-
-## Troubleshooting
-
-**Backend won't start?**
-- Check Java 17 is installed: `java -version`
-- Verify MongoDB connection string in application.properties
-
-**Frontend won't start?**
-- Run `npm install` first
-- Check Node.js is installed
-
-**Authentication errors?**
-- Verify MongoDB user has "Read and write to any database" permissions
-- Check IP address `0.0.0.0/0` is allowed in Atlas Network Access
-
----
-
-**That's it! Your authentication system is ready to use.** 🚀

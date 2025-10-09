@@ -1,17 +1,14 @@
 import { useState, FormEvent } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService, isVanderbiltEmail } from '../services/authService';
+import { authService } from '../services/authService';
 
-function Signup() {
+export default function Login() {
   const navigate = useNavigate();
   
   // Form state
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: '',
   });
 
   // UI state
@@ -29,38 +26,13 @@ function Signup() {
     setError('');
   };
 
-  // Validate form
-  const validateForm = (): string | null => {
-    if (!formData.firstName.trim()) {
-      return 'First name is required';
-    }
-    if (!formData.lastName.trim()) {
-      return 'Last name is required';
-    }
-    if (!formData.email.trim()) {
-      return 'Email is required';
-    }
-    if (!isVanderbiltEmail(formData.email)) {
-      return 'Please use your Vanderbilt email (@vanderbilt.edu)';
-    }
-    if (formData.password.length < 6) {
-      return 'Password must be at least 6 characters';
-    }
-    if (formData.password !== formData.confirmPassword) {
-      return 'Passwords do not match';
-    }
-    return null;
-  };
-
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
 
-    // Validate form
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
+    if (!formData.email || !formData.password) {
+      setError('Please fill in all fields');
       return;
     }
 
@@ -68,14 +40,12 @@ function Signup() {
 
     try {
       // Call backend API
-      const response = await authService.signup({
+      const response = await authService.login({
         email: formData.email,
         password: formData.password,
-        firstName: formData.firstName,
-        lastName: formData.lastName,
       });
 
-      if (response.message === 'Signup successful') {
+      if (response.message === 'Login successful') {
         // Store user info in localStorage (simple approach for now)
         localStorage.setItem('user', JSON.stringify({
           userId: response.userId,
@@ -85,7 +55,7 @@ function Signup() {
         }));
         
         // Redirect to home or dashboard (for now, back to landing)
-        alert('Signup successful! Welcome to PlusOne!');
+        alert(`Welcome back, ${response.firstName}!`);
         navigate('/');
       } else {
         setError(response.message);
@@ -101,7 +71,7 @@ function Signup() {
     <section className="min-vh-100 d-flex align-items-center bg-white">
       <div className="container">
         <div className="mx-auto" style={{ maxWidth: 420 }}>
-          <h1 className="h3 fw-bold mb-3 text-center">Create your account</h1>
+          <h1 className="h3 fw-bold mb-3 text-center">Log in</h1>
           
           {/* Error Alert */}
           {error && (
@@ -111,28 +81,10 @@ function Signup() {
           )}
 
           <form className="vstack gap-3" onSubmit={handleSubmit}>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="First Name"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Last Name"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="email"
-              className="form-control"
-              placeholder="Email (@vanderbilt.edu)"
+            <input 
+              type="email" 
+              className="form-control" 
+              placeholder="Email" 
               name="email"
               value={formData.email}
               onChange={handleChange}
@@ -141,18 +93,9 @@ function Signup() {
             <input
               type="password"
               className="form-control"
-              placeholder="Password (min 6 characters)"
+              placeholder="Password"
               name="password"
               value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Confirm Password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
               onChange={handleChange}
               required
             />
@@ -161,16 +104,16 @@ function Signup() {
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Account...' : 'Sign up'}
+              {isLoading ? 'Logging in...' : 'Log in'}
             </button>
           </form>
 
-          {/* Login Link */}
+          {/* Signup Link */}
           <div className="text-center mt-3">
             <small className="text-muted">
-              Already have an account?{' '}
-              <Link to="/login" className="text-primary">
-                Log in
+              Don't have an account?{' '}
+              <Link to="/signup" className="text-primary">
+                Sign up
               </Link>
             </small>
           </div>
@@ -179,6 +122,3 @@ function Signup() {
     </section>
   );
 }
-
-export default Signup;
-

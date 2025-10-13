@@ -1,53 +1,54 @@
-import { useState, FormEvent } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { authService, isVanderbiltEmail } from '../services/authService';
+import { useState } from "react";
+import type { FormEvent } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { authService, isVanderbiltEmail } from "../services/authService";
 
 export default function Signup() {
   const navigate = useNavigate();
-  
+
   // Form state
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    confirmPassword: '',
-    firstName: '',
-    lastName: '',
+    email: "",
+    password: "",
+    confirmPassword: "",
+    firstName: "",
+    lastName: "",
   });
 
   // UI state
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   // Handle input changes
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
     // Clear error when user types
-    setError('');
+    setError("");
   };
 
   // Validate form
   const validateForm = (): string | null => {
     if (!formData.firstName.trim()) {
-      return 'First name is required';
+      return "First name is required";
     }
     if (!formData.lastName.trim()) {
-      return 'Last name is required';
+      return "Last name is required";
     }
     if (!formData.email.trim()) {
-      return 'Email is required';
+      return "Email is required";
     }
     if (!isVanderbiltEmail(formData.email)) {
-      return 'Please use your Vanderbilt email (@vanderbilt.edu)';
+      return "Please use your Vanderbilt email (@vanderbilt.edu)";
     }
     if (formData.password.length < 6) {
-      return 'Password must be at least 6 characters';
+      return "Password must be at least 6 characters";
     }
     if (formData.password !== formData.confirmPassword) {
-      return 'Passwords do not match';
+      return "Passwords do not match";
     }
     return null;
   };
@@ -55,7 +56,7 @@ export default function Signup() {
   // Handle form submission
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     // Validate form
     const validationError = validateForm();
@@ -75,23 +76,26 @@ export default function Signup() {
         lastName: formData.lastName,
       });
 
-      if (response.message === 'Signup successful') {
+      if (response.message === "Signup successful") {
         // Store user info in localStorage (simple approach for now)
-        localStorage.setItem('user', JSON.stringify({
-          userId: response.userId,
-          email: response.email,
-          firstName: response.firstName,
-          lastName: response.lastName,
-        }));
-        
+        localStorage.setItem(
+          "user",
+          JSON.stringify({
+            userId: response.userId,
+            email: response.email,
+            firstName: response.firstName,
+            lastName: response.lastName,
+          })
+        );
+
         // Redirect to home or dashboard (for now, back to landing)
-        alert('Signup successful! Welcome to PlusOne!');
-        navigate('/');
+        alert("Signup successful! Welcome to PlusOne!");
+        navigate("/");
       } else {
         setError(response.message);
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred. Please try again.');
+      setError(err.message || "An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -102,7 +106,7 @@ export default function Signup() {
       <div className="container">
         <div className="mx-auto" style={{ maxWidth: 420 }}>
           <h1 className="h3 fw-bold mb-3 text-center">Create your account</h1>
-          
+
           {/* Error Alert */}
           {error && (
             <div className="alert alert-danger mb-3" role="alert">
@@ -156,19 +160,19 @@ export default function Signup() {
               onChange={handleChange}
               required
             />
-            <button 
-              className="btn btn-primary w-100" 
+            <button
+              className="btn btn-primary w-100"
               type="submit"
               disabled={isLoading}
             >
-              {isLoading ? 'Creating Account...' : 'Sign up'}
+              {isLoading ? "Creating Account..." : "Sign up"}
             </button>
           </form>
 
           {/* Login Link */}
           <div className="text-center mt-3">
             <small className="text-muted">
-              Already have an account?{' '}
+              Already have an account?{" "}
               <Link to="/login" className="text-primary">
                 Log in
               </Link>

@@ -60,7 +60,7 @@ export default function Login() {
 
         // Redirect to home or dashboard (for now, back to landing)
         alert(`Welcome back, ${response.firstName}!`);
-        navigate("/");
+        navigate("/Home");
       } else {
         setError(response.message);
       }

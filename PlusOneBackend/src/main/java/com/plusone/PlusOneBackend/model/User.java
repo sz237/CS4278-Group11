@@ -30,6 +30,10 @@ public class User {
     private LocalDateTime createdAt;
     
     private LocalDateTime updatedAt;
+
+    private int numConnections;
+
+    private int numRequests;
     
     // Constructor without ID (for new users)
     public User(String email, String password, String firstName, String lastName) {
@@ -39,7 +43,28 @@ public class User {
         this.lastName = lastName;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.numConnections = 0;
+        this.numRequests = 0;
     }
+
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public int getNumConnections() { return numConnections; }
+    public void setNumConnections(int numConnections) { this.numConnections = numConnections; }
+
+    public int getNumRequests() { return numRequests; }
+    public void setNumRequests(int numRequests) { this.numRequests = numRequests; }
 }
 
 

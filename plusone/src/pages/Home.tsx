@@ -53,8 +53,6 @@ function Home() {
           Hi {user?.firstName || "User"}, Welcome to PlusOne!
         </h1>
         <p className="text-muted">This is our home page.</p>
-
-        <h2 className="h6 fw-bold mt-4">My Posts</h2>
         
       </main>
     </div>

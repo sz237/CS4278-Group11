@@ -88,9 +88,8 @@ export default function Signup() {
           })
         );
 
-        // Redirect to home or dashboard (for now, back to landing)
-        alert("Signup successful! Welcome to PlusOne!");
-        navigate("/");
+        // Redirect into onboarding flow
+        navigate("/onboarding", { replace: true });
       } else {
         setError(response.message);
       }

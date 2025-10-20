@@ -1,5 +1,6 @@
 package com.plusone.PlusOneBackend.dto;
 
+import com.plusone.PlusOneBackend.model.Profile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,6 +21,7 @@ public class ProfileResponse {
     private int requestsCount;
     private int postsCount;
     private List<Object> posts; // For now, using Object since we don't have Post model yet
+    private Profile profile;
     private OnboardingData onboarding;
     
     @Data

@@ -2,8 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { postService } from "../services/postService";
+import { connectionService } from "../services/connectionService";
 import type { Post } from "../types/post";
 
+interface ConnectionRequest {
+  id: string;
+  fromUserId: string;
+  toUserId: string;
+  message: string;
+  status: string;
+  createdAt: string;
+  updatedAt: string;
+}
 //const GOLD = "#F2E1C0";
 
 export default function MyPage() {
@@ -18,6 +28,9 @@ export default function MyPage() {
     postsCount: number;
   } | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [connectionRequests, setConnectionRequests] = useState<ConnectionRequest[]>([]);
+  const [requestsLoading, setRequestsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
@@ -33,7 +46,9 @@ export default function MyPage() {
     if (!user?.userId) return;
     (async () => {
       try {
+        console.log('Loading profile for user:', user.userId);
         const res = await postService.getProfile(user.userId);
+        console.log('Profile loaded:', res);
         setProfile({
           userId: res.userId,
           firstName: res.firstName,
@@ -43,11 +58,30 @@ export default function MyPage() {
           postsCount: res.postsCount,
         });
         setPosts(res.posts);
+        
+        // Load connection requests
+        loadConnectionRequests();
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+        setError('Failed to load profile. Please try again.');
       } finally {
         setLoading(false);
       }
     })();
   }, [user?.userId]);
+
+  const loadConnectionRequests = async () => {
+    if (!user?.userId) return;
+    try {
+      setRequestsLoading(true);
+      const requests = await connectionService.getPendingRequests(user.userId);
+      setConnectionRequests(requests);
+    } catch (error) {
+      console.error('Failed to load connection requests:', error);
+    } finally {
+      setRequestsLoading(false);
+    }
+  };
 
   const onDelete = async (postId?: string) => {
     if (!postId) return;
@@ -57,7 +91,52 @@ export default function MyPage() {
   };
 
   const onEdit = (p: Post) => {
-    navigate("/MakePost", { state: { post: p } }); // we’ll reuse MakeAPost for editing
+    navigate("/MakePost", { state: { post: p } }); // we'll reuse MakeAPost for editing
+  };
+
+  const handleAcceptRequest = async (requestId: string) => {
+    if (!user?.userId) return;
+    try {
+      await connectionService.acceptConnectionRequest(requestId, user.userId);
+      // Reload requests to update the list
+      loadConnectionRequests();
+      // Reload profile to update connection count
+      await reloadProfile();
+    } catch (error) {
+      console.error('Failed to accept request:', error);
+      alert('Failed to accept request. Please try again.');
+    }
+  };
+
+  const handleRejectRequest = async (requestId: string) => {
+    if (!user?.userId) return;
+    try {
+      await connectionService.rejectConnectionRequest(requestId, user.userId);
+      // Reload requests to update the list
+      loadConnectionRequests();
+      // Reload profile to update counts
+      await reloadProfile();
+    } catch (error) {
+      console.error('Failed to reject request:', error);
+      alert('Failed to reject request. Please try again.');
+    }
+  };
+
+  const reloadProfile = async () => {
+    if (!user?.userId) return;
+    try {
+      const res = await postService.getProfile(user.userId);
+      setProfile({
+        userId: res.userId,
+        firstName: res.firstName,
+        lastName: res.lastName,
+        connectionsCount: res.connectionsCount,
+        requestsCount: res.requestsCount,
+        postsCount: res.postsCount,
+      });
+    } catch (error) {
+      console.error('Failed to reload profile:', error);
+    }
   };
 
   if (!user?.userId) {
@@ -99,6 +178,10 @@ export default function MyPage() {
       <main className="container py-4">
         {loading ? (
           <div>Loading…</div>
+        ) : error ? (
+          <div className="alert alert-danger" role="alert">
+            {error}
+          </div>
         ) : (
           <>
             {/* Profile block */}
@@ -133,6 +216,59 @@ export default function MyPage() {
                   <span className="small">Edit Profile</span>
                 </Link>
               </div>
+            </div>
+
+            {/* Connection Requests Section */}
+            <div className="mb-4">
+              <h3 className="h5 fw-bold mb-3">Connection Requests ({connectionRequests.length})</h3>
+              
+              {requestsLoading ? (
+                <div className="text-center py-3">
+                  <div className="spinner-border spinner-border-sm" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                  <span className="ms-2">Loading requests...</span>
+                </div>
+              ) : connectionRequests.length === 0 ? (
+                <div className="text-muted py-3">
+                  <p className="mb-0">No pending connection requests.</p>
+                </div>
+              ) : (
+                <div className="row g-3">
+                  {connectionRequests.map((request) => (
+                    <div key={request.id} className="col-12 col-md-6">
+                      <div className="p-3 border border-2" style={{ borderColor: "#000" }}>
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div>
+                            <h6 className="mb-1">Connection Request</h6>
+                            <small className="text-muted">{timeAgo(request.createdAt)}</small>
+                          </div>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <p className="mb-1"><strong>Message:</strong></p>
+                          <p className="small mb-0 text-muted">{request.message}</p>
+                        </div>
+                        
+                        <div className="d-flex gap-2">
+                          <button 
+                            className="btn btn-success btn-sm"
+                            onClick={() => handleAcceptRequest(request.id)}
+                          >
+                            Accept
+                          </button>
+                          <button 
+                            className="btn btn-outline-danger btn-sm"
+                            onClick={() => handleRejectRequest(request.id)}
+                          >
+                            Deny
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Posts header */}

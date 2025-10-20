@@ -47,7 +47,7 @@ cd CS4278-Group11/PlusOneBackend
 ./mvnw clean package
 ```
 
-## Backend Prereqs
+## Frontend Prereqs
 - **Node.js**
 You can install the latest Long Term Support (LTS) version of Node.js:
 ```bash

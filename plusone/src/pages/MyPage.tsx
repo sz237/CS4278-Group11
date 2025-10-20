@@ -201,16 +201,9 @@ export default function MyPage() {
                   {profile?.firstName} {profile?.lastName}
                 </h2>
                 <div className="text-muted small">
-<<<<<<< HEAD
                   {posts.length} posts<br />
                   {profile?.connectionsCount ?? 0} connections<br />
-=======
-                  {posts.length} posts
-                  <br />
-                  {profile?.connectionsCount ?? 0} connections
-                  <br />
                   {profile?.requestsCount ?? 0} requests
->>>>>>> origin/Messaging-and-Search-Functionality
                 </div>
                 <Link
                   to="/edit-profile"

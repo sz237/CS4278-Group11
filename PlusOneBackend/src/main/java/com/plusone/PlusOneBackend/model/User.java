@@ -1,6 +1,8 @@
 package com.plusone.PlusOneBackend.model;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -37,7 +39,8 @@ public class User {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     /**
-     * Embedded profile document with demographics, job, interests, photo, and counters.
+     * Embedded profile document with demographics, job, interests, photo, and
+     * counters.
      */
     @Builder.Default
     private Profile profile = new Profile();
@@ -58,6 +61,15 @@ public class User {
         this.updatedAt = LocalDateTime.now();
         this.profile = new Profile();
         this.onboarding = new Onboarding(false, 1, null);
+    }
+
+    /**
+     * Expose interests from profile so JSON shows "interests": [...] at top level.
+     */
+    public List<String> getInterests() {
+        return (profile != null && profile.getInterests() != null)
+                ? profile.getInterests()
+                : Collections.emptyList();
     }
 
     @Data
@@ -92,4 +104,3 @@ public class User {
         return profile;
     }
 }
-

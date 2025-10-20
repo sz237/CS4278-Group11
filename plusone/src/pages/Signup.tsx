@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authService, isVanderbiltEmail } from "../services/authService";
+import { postService } from "../services/postService";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -41,9 +42,10 @@ export default function Signup() {
     if (!formData.email.trim()) {
       return "Email is required";
     }
-    if (!isVanderbiltEmail(formData.email)) {
-      return "Please use your Vanderbilt email (@vanderbilt.edu)";
-    }
+    // Vanderbilt email validation - TEMPORARILY DISABLED
+    // if (!isVanderbiltEmail(formData.email)) {
+    //   return "Please use your Vanderbilt email (@vanderbilt.edu)";
+    // }
     if (formData.password.length < 6) {
       return "Password must be at least 6 characters";
     }
@@ -88,8 +90,21 @@ export default function Signup() {
           })
         );
 
-        // Redirect into onboarding flow
-        navigate("/onboarding", { replace: true });
+        // Redirect based on onboarding progress
+        try {
+          if (response.userId) {
+            const profile = await profileService.getProfile(response.userId);
+            if (profile.onboarding?.completed) {
+              navigate("/home");
+            } else {
+              navigate("/onboarding");
+            }
+          } else {
+            navigate("/onboarding");
+          }
+        } catch {
+          navigate("/onboarding");
+        }
       } else {
         setError(response.message);
       }

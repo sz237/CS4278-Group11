@@ -46,3 +46,39 @@ cd CS4278-Group11/PlusOneBackend
 ./mvnw spring-boot:run
 ./mvnw clean package
 ```
+
+## Backend Prereqs
+- **Node.js**
+You can install the latest Long Term Support (LTS) version of Node.js:
+```bash
+nvm install --lts
+```
+
+Alternatively, to install a specific version:
+```bash
+nvm install <version_number> # e.g., nvm install 18
+```
+
+Check the installed Node.js and npm versions:
+```bash
+node -v
+npm -v
+```
+
+## Run the frontend
+First time:
+
+```bash
+cd plusone
+npm install
+npm run dev
+```
+npm install sets up the dependencies
+
+Running after setup: 
+```bash
+cd plusone
+npm run dev
+```
+
+This will give you a locally hosted front end. You need to run both front end and backend on separate terminals to access login features. 

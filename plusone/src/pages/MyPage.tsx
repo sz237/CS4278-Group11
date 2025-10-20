@@ -6,7 +6,6 @@ import { connectionService } from "../services/connectionService";
 import type { Post } from "../types/post";
 
 interface ConnectionRequest {
-  id: string;
   fromUserId: string;
   toUserId: string;
   message: string;
@@ -202,8 +201,8 @@ export default function MyPage() {
                 </h2>
                 <div className="text-muted small">
                   {posts.length} posts<br />
-                  {profile?.connectionsCount ?? 0} connections<br />
-                  {profile?.requestsCount ?? 0} requests
+                  {/* {profile?.connectionsCount ?? 0} connections */}<br />
+                  {/* {profile?.requestsCount ?? 0} requests */}
                 </div>
                 <Link
                   to="/edit-profile"
@@ -233,8 +232,8 @@ export default function MyPage() {
                 </div>
               ) : (
                 <div className="row g-3">
-                  {connectionRequests.map((request) => (
-                    <div key={request.id} className="col-12 col-md-6">
+                  {connectionRequests.map((request, index) => (
+                    <div key={index} className="col-12 col-md-6">
                       <div className="p-3 border border-2" style={{ borderColor: "#000" }}>
                         <div className="d-flex justify-content-between align-items-start mb-2">
                           <div>
@@ -251,13 +250,13 @@ export default function MyPage() {
                         <div className="d-flex gap-2">
                           <button 
                             className="btn btn-success btn-sm"
-                            onClick={() => handleAcceptRequest(request.id)}
+                            onClick={() => handleAcceptRequest(request.fromUserId)}
                           >
                             Accept
                           </button>
                           <button 
                             className="btn btn-outline-danger btn-sm"
-                            onClick={() => handleRejectRequest(request.id)}
+                            onClick={() => handleRejectRequest(request.fromUserId)}
                           >
                             Deny
                           </button>

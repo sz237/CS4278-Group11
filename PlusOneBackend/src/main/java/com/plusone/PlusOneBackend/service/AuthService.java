@@ -27,10 +27,10 @@ public class AuthService {
      */
     public AuthResponse signup(SignupRequest request) {
         try {
-            // Validate Vanderbilt email - TEMPORARILY DISABLED
-            // if (!isVanderbiltEmail(request.getEmail())) {
-            //     return new AuthResponse("Only Vanderbilt email addresses (@vanderbilt.edu) are allowed");
-            // }
+            // Validate Vanderbilt email
+            if (!isVanderbiltEmail(request.getEmail())) {
+                return new AuthResponse("Only Vanderbilt email addresses (@vanderbilt.edu) are allowed");
+            }
 
             // Check if user already exists
             if (userRepository.existsByEmail(request.getEmail())) {

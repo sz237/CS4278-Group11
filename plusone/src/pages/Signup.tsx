@@ -42,10 +42,10 @@ export default function Signup() {
     if (!formData.email.trim()) {
       return "Email is required";
     }
-    // Vanderbilt email validation - TEMPORARILY DISABLED
-    // if (!isVanderbiltEmail(formData.email)) {
-    //   return "Please use your Vanderbilt email (@vanderbilt.edu)";
-    // }
+    // Vanderbilt email validation
+    if (!isVanderbiltEmail(formData.email)) {
+      return "Please use your Vanderbilt email (@vanderbilt.edu)";
+    }
     if (formData.password.length < 6) {
       return "Password must be at least 6 characters";
     }

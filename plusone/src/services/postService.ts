@@ -1,28 +1,8 @@
 import axios from "axios";
+import type { Post } from "../types/post";
+import type { ProfileResponse } from "../types/profile";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8080/api";
-
-export type Category = "Events" | "Job opportunities" | "Internships" | "Housing";
-
-export type Post = {
-  id?: string;
-  userId: string;
-  category: Category;
-  title: string;
-  description: string;
-  imageUrl?: string | null;
-  createdAt?: string;
-};
-
-export type ProfileResponse = {
-  userId: string;
-  firstName: string;
-  lastName: string;
-  connectionsCount: number;
-  requestsCount: number;
-  postsCount: number;
-  posts: Post[];
-};
 
 const api = axios.create({
   baseURL: API_BASE,

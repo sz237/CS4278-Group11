@@ -1,40 +1,53 @@
 package com.plusone.PlusOneBackend.model;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "users")
 public class User {
-    
+
     @Id
     private String id;
-    
+
     @Indexed(unique = true)
     private String email;
-    
-    private String password; // This will be hashed
-    
+
+    private String password; // hashed before persistence
+
     private String firstName;
-    
+
     private String lastName;
-    
-    private LocalDateTime createdAt;
-    
-    private LocalDateTime updatedAt;
 
-    private int numConnections;
+    @Builder.Default
+    private LocalDateTime createdAt = LocalDateTime.now();
 
-    private int numRequests;
-    
+    @Builder.Default
+    private LocalDateTime updatedAt = LocalDateTime.now();
+
+    /**
+     * Embedded profile document with demographics, job, interests, photo, and counters.
+     */
+    @Builder.Default
+    private Profile profile = new Profile();
+
+    /**
+     * Onboarding progress (step slider 1..4 and completion flag).
+     */
+    @Builder.Default
+    private Onboarding onboarding = new Onboarding(false, 1, null);
+
     // Constructor without ID (for new users)
     public User(String email, String password, String firstName, String lastName) {
         this.email = email;
@@ -43,28 +56,40 @@ public class User {
         this.lastName = lastName;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
-        this.numConnections = 0;
-        this.numRequests = 0;
+        this.profile = new Profile();
+        this.onboarding = new Onboarding(false, 1, null);
     }
 
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Onboarding {
+        private boolean completed;
+        private Integer step; // 1 to 4
+        private LocalDateTime completedAt;
+    }
 
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public int getNumConnections() {
+        return profile != null ? profile.getNumConnections() : 0;
+    }
 
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
+    public void setNumConnections(int numConnections) {
+        ensureProfile().setNumConnections(numConnections);
+    }
 
-    public String getFirstName() { return firstName; }
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public int getNumRequests() {
+        return profile != null ? profile.getNumRequests() : 0;
+    }
 
-    public String getLastName() { return lastName; }
-    public void setLastName(String lastName) { this.lastName = lastName; }
+    public void setNumRequests(int numRequests) {
+        ensureProfile().setNumRequests(numRequests);
+    }
 
-    public int getNumConnections() { return numConnections; }
-    public void setNumConnections(int numConnections) { this.numConnections = numConnections; }
-
-    public int getNumRequests() { return numRequests; }
-    public void setNumRequests(int numRequests) { this.numRequests = numRequests; }
+    private Profile ensureProfile() {
+        if (profile == null) {
+            profile = new Profile();
+        }
+        return profile;
+    }
 }
-
 

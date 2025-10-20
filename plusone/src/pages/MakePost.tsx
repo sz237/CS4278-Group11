@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
-import type { Post, Category } from "../services/postService";
 import { postService } from "../services/postService";
+import type { Post, Category } from "../types/post";
 
 export default function MakePost() {
   const [navOpen, setNavOpen] = useState(false);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../services/authService";
+import { profileService } from "../services/profileService";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -58,9 +59,21 @@ export default function Login() {
           })
         );
 
-        // Redirect to home or dashboard (for now, back to landing)
-        alert(`Welcome back, ${response.firstName}!`);
-        navigate("/Home");
+        // Redirect based on onboarding progress
+        try {
+          if (response.userId) {
+            const profile = await profileService.getProfile(response.userId);
+            if (profile.onboarding?.completed) {
+              navigate("/home");
+            } else {
+              navigate("/onboarding");
+            }
+          } else {
+            navigate("/home");
+          }
+        } catch {
+          navigate("/home");
+        }
       } else {
         setError(response.message);
       }

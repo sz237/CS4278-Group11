@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import { postService } from "../services/postService";
 import type { Post } from "../services/postService";
+import type { Post } from "../types/post";
 
 //const GOLD = "#F2E1C0";
 

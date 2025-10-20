@@ -12,8 +12,6 @@ function Home() {
     }
   })();
 
-  const lineColor = "#F2E1C0";
-
   return (
     <div className="bg-white" style={{ minHeight: "100vh" }}>
       {/* top black header with hamburger */}

@@ -2,16 +2,19 @@ package com.plusone.PlusOneBackend.service;
 
 import com.plusone.PlusOneBackend.dto.ProfileResponse;
 import com.plusone.PlusOneBackend.dto.ProfileUpdateRequest;
+import com.plusone.PlusOneBackend.model.Post;
 import com.plusone.PlusOneBackend.model.Profile;
 import com.plusone.PlusOneBackend.model.User;
 import com.plusone.PlusOneBackend.repository.ConnectionRepository;
 import com.plusone.PlusOneBackend.repository.ConnectionRequestRepository;
+import com.plusone.PlusOneBackend.repository.PostRepository;
 import com.plusone.PlusOneBackend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -29,6 +32,9 @@ public class ProfileService {
     @Autowired
     private ConnectionRequestRepository connectionRequestRepository;
 
+    @Autowired
+    private PostRepository postRepository;
+
     /**
      * Get user profile with counts.
      */
@@ -38,7 +44,9 @@ public class ProfileService {
         int connectionsCount = getConnectionsCount(userId);
         int requestsCount = getPendingRequestsCount(userId);
 
-        return buildProfileResponse(user, connectionsCount, requestsCount);
+        List<Post> posts = getUserPosts(userId);
+
+        return buildProfileResponse(user, connectionsCount, requestsCount, posts);
     }
 
     /**
@@ -64,7 +72,9 @@ public class ProfileService {
         int connectionsCount = getConnectionsCount(userId);
         int requestsCount = getPendingRequestsCount(userId);
 
-        return buildProfileResponse(user, connectionsCount, requestsCount);
+        List<Post> posts = getUserPosts(userId);
+
+        return buildProfileResponse(user, connectionsCount, requestsCount, posts);
     }
 
     private User findUserOrThrow(String userId) {
@@ -157,7 +167,16 @@ public class ProfileService {
         }
     }
 
-    private ProfileResponse buildProfileResponse(User user, int connectionsCount, int requestsCount) {
+    private List<Post> getUserPosts(String userId) {
+        try {
+            return postRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        } catch (Exception e) {
+            System.err.println("Error fetching posts for user " + userId + ": " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    private ProfileResponse buildProfileResponse(User user, int connectionsCount, int requestsCount, List<Post> posts) {
         Profile profile = user.getProfile() != null ? user.getProfile() : new Profile();
         User.Onboarding onboarding = user.getOnboarding();
         if (onboarding == null) {
@@ -170,8 +189,8 @@ public class ProfileService {
             .lastName(user.getLastName())
             .connectionsCount(connectionsCount)
             .requestsCount(requestsCount)
-            .postsCount(0) // Posts not implemented yet
-            .posts(new ArrayList<>())
+            .postsCount(posts != null ? posts.size() : 0)
+            .posts(posts != null ? posts : new ArrayList<>())
             .profile(profile)
             .onboarding(ProfileResponse.OnboardingData.builder()
                 .completed(onboarding.isCompleted())

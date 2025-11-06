@@ -4,16 +4,8 @@ import Sidebar from "../components/Sidebar";
 import { postService } from "../services/postService";
 import { connectionService } from "../services/connectionService";
 import type { Post } from "../types/post";
+import type { ConnectionRequest } from "../types/connection";
 
-interface ConnectionRequest {
-  id: string;
-  fromUserId: string;
-  toUserId: string;
-  message: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
 //const GOLD = "#F2E1C0";
 
 export default function MyPage() {
@@ -283,7 +275,10 @@ export default function MyPage() {
                     style={{ borderColor: "#000" }}
                   >
                     <div className="d-flex justify-content-between small">
-                      <span className="text-muted">{p.category}</span>
+                      <span className="text-muted">
+                        {p.category}
+                        {p.category === "Events" && p.eventDate ? ` • ${p.eventDate}` : ""}
+                      </span>
                       <span className="text-muted">{timeAgo(p.createdAt)}</span>
                     </div>
                     <hr className="my-1" />

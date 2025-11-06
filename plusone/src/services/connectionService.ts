@@ -1,4 +1,5 @@
 import axios from 'axios';
+import type { ConnectionRequest } from "../types/connection";
 
 const API_BASE_URL = 'http://localhost:8080/api/connections';
 
@@ -32,14 +33,6 @@ export interface CreateConnectionRequest {
   message: string;
 }
 
-export interface ConnectionRequest {
-  fromUserId: string;
-  toUserId: string;
-  message: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
 
 export const connectionService = {
   // Get recent users for homepage

@@ -11,6 +11,7 @@ export default function MakePost() {
   const [description, setDescription] = useState("");
   const [file, setFile] = useState<File | null>(null);
   const [imageUrl, setImageUrl] = useState<string | undefined>(undefined);
+  const [eventDate, setEventDate] = useState<string>("");
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
@@ -28,10 +29,22 @@ export default function MakePost() {
       setCategory(p.category);
       setDescription(p.description);
       setImageUrl(p.imageUrl || undefined);
+      setEventDate(p.eventDate || "");
     }
   }, [state]);
 
+  const handleSelectCategory = (label: Category) => {
+    setCategory(label);
+    if(label !== "Events") setEventDate("");
+  };
+
   const onFilePick = () => fileInputRef.current?.click();
+
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  const minDate = `${yyyy}-${mm}-${dd}`;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -45,6 +58,7 @@ export default function MakePost() {
       category,
       description,
       imageUrl: imageUrl || undefined,
+      eventDate: category === "Events" && eventDate ? eventDate : null,
     };
 
     if (payload.id) {
@@ -93,7 +107,7 @@ export default function MakePost() {
 
           <div className="post-box">
             <div className="d-flex flex-wrap align-items-center gap-4 px-2 py-1">
-              {(["Events", "Job opportunities", "Internships", "Housing"] as Category[]).map((label) => (
+              {(["Events", "Job opportunities", "Internships", "Housing", "Other"] as Category[]).map((label) => (
                 <label key={label} className="form-check-inline d-flex align-items-center gap-2 m-0">
                   <input
                     type="radio"
@@ -101,7 +115,7 @@ export default function MakePost() {
                     name="category"
                     value={label}
                     checked={category === label}
-                    onChange={() => setCategory(label)}
+                    onChange={() => handleSelectCategory(label)}
                   />
                   <span className="post-radio-label">{label}</span>
                 </label>
@@ -119,6 +133,20 @@ export default function MakePost() {
               required
             />
           </div>
+
+          {category === "Events" && (
+            <div className="post-box">
+              <label className="form-label mb-1">Event date</label>
+              <input
+                type="date"
+                className="form-control"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                required={category === "Events"} 
+                min={new Date().toISOString().slice(0,10)}
+               />
+            </div>
+          )}
 
           <div className="post-box d-flex align-items-center justify-content-between">
             <span className="text-muted ms-2">

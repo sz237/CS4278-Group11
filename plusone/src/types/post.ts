@@ -1,4 +1,4 @@
-export type Category = "Events" | "Job opportunities" | "Internships" | "Housing";
+export type Category = "Events" | "Job opportunities" | "Internships" | "Housing" | "Other";
 
 export interface Post {
   id?: string;
@@ -8,5 +8,6 @@ export interface Post {
   description: string;
   imageUrl?: string | null;
   createdAt?: string;
+  eventDate?: string | null;
 }
 
